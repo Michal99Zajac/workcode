@@ -1,0 +1,6 @@
+[submodule "frontend-workcode"]
+	path = frontend-workcode
+	url = git@github.com:Michal99Zajac/frontend-workcode.git
+[submodule "backend-workcode"]
+	path = backend-workcode
+	url = git@github.com:Michal99Zajac/backend-workcode.git
