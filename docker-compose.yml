@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  mongodb:
+    container_name: workcode-database
+    image: mongo:5.0
+    restart: always
+    expose:
+      - 27017
+    volumes:
+      - ~/apps/mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    networks:
+      - workcode
+  mailhog:
+    container_name: workcode-SMTP
+    image: mailhog/mailhog
+    expose:
+      - 1025
+    ports:
+      - 8025:8025 # UI
+    restart: unless-stopped
+    logging:
+      driver: 'none'
+    networks:
+      - workcode
+  server:
+    container_name: workcode-server
+    restart: always
+    build:
+      context: ./backend-workcode
+      dockerfile: dockerfile
+    expose:
+      - 8000
+    depends_on:
+      - mongodb
+      - mailhog
+    env_file:
+      - ./.env
+    networks:
+      - workcode
+  frontend:
+    container_name: workcode-frontend
+    restart: always
+    build:
+      context: ./frontend-workcode
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env
+    networks:
+      - workcode
+
+networks:
+  workcode:
+    driver: bridge
